@@ -92,21 +92,32 @@ class ViewController: UIViewController, ARSCNViewDelegate {
     func addPlanet(atLocation location: ARHitTestResult) {
         
         let planet = SCNSphere(radius: 0.005)
-        let material = SCNMaterial()
-        material.diffuse.contents = UIImage(named: "art.scnassets/8k_moon.jpg")
-        planet.materials = [material]
-        let node = SCNNode()
-        node.position = SCNVector3(
-                x: location.worldTransform.columns.3.x,
-                y: location.worldTransform.columns.3.y + Float(planet.radius),
-                z: location.worldTransform.columns.3.z
-            )
-        node.geometry = planet
-        sceneView.scene.rootNode.addChildNode(node)
+        let planetMaterial = SCNMaterial()
+        planetMaterial.diffuse.contents = UIImage(named: "art.scnassets/8k_moon.jpg")
+        planet.materials = [planetMaterial]
+        let planetNode = SCNNode()
+        planetNode.position = SCNVector3(
+            x: location.worldTransform.columns.3.x,
+            y: location.worldTransform.columns.3.y + Float(planet.radius),
+            z: location.worldTransform.columns.3.z
+        )
+        planetNode.geometry = planet
+        sceneView.scene.rootNode.addChildNode(planetNode)
         
-        rotate(planetWithNode: node)
-        grow(planetWithNode: node)
+        rotate(planetWithNode: planetNode)
+        grow(planetWithNode: planetNode)
         
+        let core = SCNSphere(radius: 0.0025)
+        let coreMaterial = SCNMaterial()
+        coreMaterial.diffuse.contents = UIColor.brown
+        core.materials = [coreMaterial]
+        let coreNode = SCNNode()
+        coreNode.position = planetNode.position
+        coreNode.geometry = core
+        sceneView.scene.rootNode.addChildNode(coreNode)
+        
+        rotate(planetWithNode: coreNode)
+        grow(planetWithNode: coreNode)
         
     }
     
