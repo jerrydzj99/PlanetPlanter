@@ -72,4 +72,59 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         
     }
     
+    //MARK: - Planet Rendering Methods
+    
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        
+        if let touch = touches.first {
+            
+            let touchLocation = touch.location(in: sceneView)
+            let results = sceneView.hitTest(touchLocation, types: .existingPlaneUsingExtent)
+            
+            if let hitResult = results.first {
+                addPlanet(atLocation: hitResult)
+            }
+            
+        }
+        
+    }
+    
+    func addPlanet(atLocation location: ARHitTestResult) {
+        
+        let planet = SCNSphere(radius: 0.005)
+        let material = SCNMaterial()
+        material.diffuse.contents = UIImage(named: "art.scnassets/8k_moon.jpg")
+        planet.materials = [material]
+        let node = SCNNode()
+        node.position = SCNVector3(
+                x: location.worldTransform.columns.3.x,
+                y: location.worldTransform.columns.3.y + Float(planet.radius),
+                z: location.worldTransform.columns.3.z
+            )
+        node.geometry = planet
+        sceneView.scene.rootNode.addChildNode(node)
+        
+        rotate(planetWithNode: node)
+        grow(planetWithNode: node)
+        
+        
+    }
+    
+    func rotate(planetWithNode planet: SCNNode) {
+        
+        planet.runAction(SCNAction.repeatForever(SCNAction.rotateBy(
+            x: 0,
+            y: CGFloat(Float.pi),
+            z: 0,
+            duration: 3
+        )))
+        
+    }
+    
+    func grow(planetWithNode planet: SCNNode) {
+        
+        planet.runAction(SCNAction.repeatForever(SCNAction.scale(by: 1.1, duration: 2)))
+        
+    }
+    
 }
